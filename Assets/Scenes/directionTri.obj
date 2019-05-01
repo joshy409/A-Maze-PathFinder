@@ -1,0 +1,11 @@
+# Blender v2.79 (sub 0) OBJ File: ''
+# www.blender.org
+mtllib directionTri.mtl
+o Circle
+v 0.000000 0.000000 -2.172642
+v -0.866025 0.000000 1.086321
+v 0.866025 0.000000 1.086321
+vn 0.0000 1.0000 0.0000
+usemtl None
+s off
+f 1//1 2//1 3//1
