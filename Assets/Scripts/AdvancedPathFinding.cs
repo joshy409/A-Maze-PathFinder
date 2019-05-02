@@ -92,10 +92,13 @@ public class AdvancedPathFinding : MonoBehaviour
                     targetDir = transform.right;
                     break;
                 case Path.Return:
-                    transform.position = openEggs.First().GetComponent<PathData>().GetLastDataEgg().transform.position;
-                    lastDataEgg = openEggs.First().GetComponent<PathData>().GetLastDataEgg().GetComponent<PathData>().GetLastDataEgg();
-                    targetDir = openEggs.First().transform.position - transform.position;
-                    openEggs.Remove(openEggs.First());
+                    if (openEggs.Count > 0)
+                    {
+                        transform.position = openEggs.First().GetComponent<PathData>().GetLastDataEgg().transform.position;
+                        lastDataEgg = openEggs.First().GetComponent<PathData>().GetLastDataEgg().GetComponent<PathData>().GetLastDataEgg();
+                        targetDir = openEggs.First().transform.position - transform.position;
+                        openEggs.Remove(openEggs.First());
+                    }
                     break;
                 default:
                     targetDir = transform.forward;
@@ -145,7 +148,7 @@ public class AdvancedPathFinding : MonoBehaviour
         } else if (forwardCost == -1)
         {
             return Path.Forward;
-        }
+        } 
 
         if (leftCost == 0)
         {
@@ -153,7 +156,7 @@ public class AdvancedPathFinding : MonoBehaviour
         } else if (leftCost == -1)
         {
             return Path.Left;
-        }
+        } 
 
         int min = 0;
 
@@ -255,6 +258,7 @@ public class AdvancedPathFinding : MonoBehaviour
             else if (ray.collider.name == "Exit") { return -1; }
             else if (ray.collider.tag == "DataEgg")
             {
+                if (touchedEggs.Contains(ray.transform.gameObject)) { return 0; }
                 if (ray.transform.gameObject.GetComponent<PathData>().GetIsDeadEnd()) { return 1; }
                 if (lastDataEgg != null)
                 {
@@ -274,7 +278,10 @@ public class AdvancedPathFinding : MonoBehaviour
         if (other.CompareTag("DataEgg"))
         {
             PathData eggData = other.GetComponent<PathData>();
-        
+            if (openEggs.Contains(other.gameObject))
+            {
+                openEggs.Remove(other.gameObject);
+            }
             if (!touchedEggs.Contains(other.gameObject))
             {
                 touchedEggs.Add(other.gameObject);
@@ -300,43 +307,6 @@ public class AdvancedPathFinding : MonoBehaviour
         }
     }
 
-    void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("DataEgg"))
-        {
-            if (other.gameObject.GetComponent<PathData>().GetIsDeadEnd())
-            {
-                StartCoroutine(DestroyEgg(other.gameObject.GetComponent<PathData>().GetLastDataEgg()));
-                Debug.LogError("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-                Destroy(other.gameObject);                   
-            }
-        }
-
-    }
-    //TODO: delete all the dead end eggs that AI has already seen
-
-    IEnumerator DestroyEgg(GameObject dataEgg)
-    {
-        EggEndCheck();
-        yield return new WaitForSeconds(1f);
-        PathData pathData = dataEgg.GetComponent<PathData>();
-        while(pathData.GetHits() < 1)
-        {
-            Debug.LogError("ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd");
-            pathData = pathData.GetLastDataEgg().GetComponent<PathData>();
-            Destroy(pathData.gameObject);
-        }
-    }
-
-
-    void EggEndCheck()
-    {
-        GameObject[] eggs = GameObject.FindGameObjectsWithTag("DataEgg");
-        foreach (var egg in eggs)
-        {
-            egg.GetComponent<PathData>().WallCheck();
-        }
-    }
     private void SortOpenEgg()
     {
         if (openEggs != null)
@@ -345,4 +315,43 @@ public class AdvancedPathFinding : MonoBehaviour
             openEggs = sortedEggs;
         }
     }
+
+    //void OnTriggerExit(Collider other)
+    //{
+    //    if (other.CompareTag("DataEgg"))
+    //    {
+    //        if (other.gameObject.GetComponent<PathData>().GetIsDeadEnd())
+    //        {
+    //            GameObject previousEgg = other.gameObject.GetComponent<PathData>().GetLastDataEgg();
+    //            other.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+    //            Destroy(other.gameObject);
+    //            DestroyEgg(previousEgg);
+    //        }
+    //    }
+
+    //}
+
+    //void DestroyEgg(GameObject dataEgg)
+    //{
+    //    PathData pathData = dataEgg.GetComponent<PathData>();
+    //    pathData.WallCheck();
+    //    while(pathData.GetIsDeadEnd())
+    //    {
+    //        PathData newPathData = pathData.GetLastDataEgg().GetComponent<PathData>();
+    //        pathData.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+    //        Destroy(pathData.gameObject);
+    //        pathData = newPathData;
+    //        pathData.WallCheck();
+    //    }
+    //}
+
+
+    //void EggEndCheck()
+    //{
+    //    GameObject[] eggs = GameObject.FindGameObjectsWithTag("DataEgg");
+    //    foreach (var egg in eggs)
+    //    {
+    //        egg.GetComponent<PathData>().WallCheck();
+    //    }
+    //}
 }

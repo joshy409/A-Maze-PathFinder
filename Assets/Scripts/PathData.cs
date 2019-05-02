@@ -19,10 +19,10 @@ public class PathData : MonoBehaviour {
 
     void Update()
     {
-        if (isDeadEnd)
-        {
-            GetComponent<Renderer>().material.color = new Color(250, 0, 250);
-        }
+        //if (isDeadEnd)
+        //{
+        //    GetComponent<Renderer>().material.color = new Color(250, 0, 250);
+        //}
     }
 
     public void UpdateHCost()
@@ -82,54 +82,54 @@ public class PathData : MonoBehaviour {
         return hits;
     }
 
-    public void WallCheck()
-    {
-        hits = 0;
-        RaycastHit forwardRay;
-        RaycastHit leftRay;
-        RaycastHit rightRay;
-        RaycastHit backRay;
+    //public void WallCheck()
+    //{
+    //    hits = 0;
+    //    RaycastHit forwardRay;
+    //    RaycastHit leftRay;
+    //    RaycastHit rightRay;
+    //    RaycastHit backRay;
 
-        Physics.Raycast(transform.position, transform.forward, out forwardRay, 1f);
-        Physics.Raycast(transform.position, -transform.right, out leftRay, 1f);
-        Physics.Raycast(transform.position, transform.right, out rightRay, 1f);
-        Physics.Raycast(transform.position, -transform.forward, out backRay, 1f);
+    //    Physics.Raycast(transform.position, transform.forward, out forwardRay, 1f);
+    //    Physics.Raycast(transform.position, -transform.right, out leftRay, 1f);
+    //    Physics.Raycast(transform.position, transform.right, out rightRay, 1f);
+    //    Physics.Raycast(transform.position, -transform.forward, out backRay, 1f);
 
-        if (forwardRay.collider == null) { }
-        else if (forwardRay.collider.tag == "Maze") { }
-        else if (forwardRay.collider.tag == "DataEgg" || forwardRay.collider.tag == "Exit")
-        {
-            hits++;
+    //    if (forwardRay.collider == null) { }
+    //    else if (forwardRay.collider.tag == "Maze") { }
+    //    else if (forwardRay.collider.tag == "DataEgg" || forwardRay.collider.tag == "Exit")
+    //    {
+    //        hits++;
             
-        }
-        if (leftRay.collider == null) {  }
-        else if (leftRay.collider.tag == "Maze") {  }
-        else if (leftRay.collider.tag == "DataEgg" || leftRay.collider.tag == "Exit")
-        {
-            hits++;
+    //    }
+    //    if (leftRay.collider == null) {  }
+    //    else if (leftRay.collider.tag == "Maze") {  }
+    //    else if (leftRay.collider.tag == "DataEgg" || leftRay.collider.tag == "Exit")
+    //    {
+    //        hits++;
 
-        }
-        if (rightRay.collider == null) {  }
+    //    }
+    //    if (rightRay.collider == null) {  }
 
-        else if (rightRay.collider.tag == "Maze") { }
-        else if (rightRay.collider.tag == "DataEgg" || rightRay.collider.tag == "Exit")
-        {
-            hits++;
+    //    else if (rightRay.collider.tag == "Maze") { }
+    //    else if (rightRay.collider.tag == "DataEgg" || rightRay.collider.tag == "Exit")
+    //    {
+    //        hits++;
 
-        }
-        if (backRay.collider == null) {}
-        else if (backRay.collider.tag == "Maze") { }
-        else if (backRay.collider.tag == "DataEgg" || backRay.collider.tag == "Exit")
-        {
+    //    }
+    //    if (backRay.collider == null) {}
+    //    else if (backRay.collider.tag == "Maze") { }
+    //    else if (backRay.collider.tag == "DataEgg" || backRay.collider.tag == "Exit")
+    //    {
 
-            hits++;
-        }
+    //        hits++;
+    //    }
 
 
-        if (hits <= 1)
-        {
-            isDeadEnd = true;
-        }
+    //    if (hits <= 1)
+    //    {
+    //        isDeadEnd = true;
+    //    }
         
-    }
+    //}
 }
