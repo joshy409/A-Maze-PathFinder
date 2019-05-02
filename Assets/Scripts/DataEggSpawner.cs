@@ -12,19 +12,11 @@ public class DataEggSpawner : MonoBehaviour {
         {
             for (int j = 0; j < 10; j++)
             {
-                instantiatedEgg = (GameObject)Instantiate(dataEgg, new Vector3(4.5f - 1f * i ,.5f, -4.5f + 1f * j), Quaternion.identity);
+                instantiatedEgg = (GameObject)Instantiate(dataEgg, new Vector3(4.5f - 1f * i, .5f, -4.5f + 1f * j), Quaternion.identity);
                 instantiatedEgg.GetComponent<PathData>().UpdateHCost();
                 instantiatedEgg.name = "Sphere " + i + j;
             }
-        }
-
-        GameObject[] eggs = GameObject.FindGameObjectsWithTag("DataEgg");
-
-        //foreach (var egg in eggs)
-        //{
-        //    egg.GetComponent<PathData>().WallCheck();
-        //}
-                
+        }       
     }
 	
 

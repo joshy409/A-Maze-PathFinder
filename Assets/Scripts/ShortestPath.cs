@@ -5,7 +5,7 @@ using UnityEngine;
 public class ShortestPath : MonoBehaviour
 {
     [SerializeField] Exit exit;
-    [SerializeField] GameObject dataEgg;
+    private GameObject dataEgg;
 
     // Update is called once per frame
     void Update()

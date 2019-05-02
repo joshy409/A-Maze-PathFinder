@@ -12,8 +12,8 @@ public class AdvancedPathFinding : MonoBehaviour
 
     [SerializeField] float speed = .1f;
     [SerializeField] float rotationSpeed = 4f;
-    [SerializeField] GameObject lastDataEgg = null;
 
+    private GameObject lastDataEgg = null;
     private HashSet<GameObject> openEggs = new HashSet<GameObject>();
     private HashSet<GameObject> touchedEggs = new HashSet<GameObject>();
 
@@ -26,7 +26,7 @@ public class AdvancedPathFinding : MonoBehaviour
         Debug.Log("I'm going to find my way out!");
         GetComponent<Renderer>().material.color = new Color(0, 0, 255);
     }
-    private bool destory = true;
+
     void Update()
     {
         
@@ -277,7 +277,8 @@ public class AdvancedPathFinding : MonoBehaviour
     {
         if (other.CompareTag("DataEgg"))
         {
-            PathData eggData = other.GetComponent<PathData>();
+            other.GetComponent<Renderer>().material.color = new Color(0, 255, 0);
+
             if (openEggs.Contains(other.gameObject))
             {
                 openEggs.Remove(other.gameObject);
@@ -286,8 +287,8 @@ public class AdvancedPathFinding : MonoBehaviour
             {
                 touchedEggs.Add(other.gameObject);
             }
-            other.GetComponent<Renderer>().material.color = new Color(0, 255, 0);
 
+            PathData eggData = other.GetComponent<PathData>();
             if (lastDataEgg == null)
             {
                 eggData.UpdateGCost(0);
@@ -315,43 +316,4 @@ public class AdvancedPathFinding : MonoBehaviour
             openEggs = sortedEggs;
         }
     }
-
-    //void OnTriggerExit(Collider other)
-    //{
-    //    if (other.CompareTag("DataEgg"))
-    //    {
-    //        if (other.gameObject.GetComponent<PathData>().GetIsDeadEnd())
-    //        {
-    //            GameObject previousEgg = other.gameObject.GetComponent<PathData>().GetLastDataEgg();
-    //            other.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-    //            Destroy(other.gameObject);
-    //            DestroyEgg(previousEgg);
-    //        }
-    //    }
-
-    //}
-
-    //void DestroyEgg(GameObject dataEgg)
-    //{
-    //    PathData pathData = dataEgg.GetComponent<PathData>();
-    //    pathData.WallCheck();
-    //    while(pathData.GetIsDeadEnd())
-    //    {
-    //        PathData newPathData = pathData.GetLastDataEgg().GetComponent<PathData>();
-    //        pathData.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-    //        Destroy(pathData.gameObject);
-    //        pathData = newPathData;
-    //        pathData.WallCheck();
-    //    }
-    //}
-
-
-    //void EggEndCheck()
-    //{
-    //    GameObject[] eggs = GameObject.FindGameObjectsWithTag("DataEgg");
-    //    foreach (var egg in eggs)
-    //    {
-    //        egg.GetComponent<PathData>().WallCheck();
-    //    }
-    //}
 }

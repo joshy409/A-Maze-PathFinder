@@ -99,9 +99,11 @@ MonoBehaviour:
   hCost: 0
   gCost: 0
   fCost: 0
-  destination: {fileID: 4206636709763516, guid: 6686e7b599c799f4d8ef5e7669e5014d,
+  destination: {fileID: 4516739586422730, guid: 6686e7b599c799f4d8ef5e7669e5014d,
     type: 2}
   lastDataEgg: {fileID: 0}
+  isDeadEnd: 0
+  hits: 0
 --- !u!135 &135461923043414846
 SphereCollider:
   m_ObjectHideFlags: 1

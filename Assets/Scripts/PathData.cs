@@ -16,15 +16,6 @@ public class PathData : MonoBehaviour {
     [SerializeField] bool isDeadEnd = false;
     [SerializeField] int hits;
 
-
-    void Update()
-    {
-        //if (isDeadEnd)
-        //{
-        //    GetComponent<Renderer>().material.color = new Color(250, 0, 250);
-        //}
-    }
-
     public void UpdateHCost()
     {
         hCost = (int)Mathf.Abs(transform.position.x - destination.position.x) * 100 / 10 + (int)Mathf.Abs(transform.position.z - destination.position.z) * 100 / 10;
