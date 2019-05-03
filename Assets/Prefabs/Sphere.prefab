@@ -99,8 +99,7 @@ MonoBehaviour:
   hCost: 0
   gCost: 0
   fCost: 0
-  destination: {fileID: 4516739586422730, guid: 6686e7b599c799f4d8ef5e7669e5014d,
-    type: 2}
+  destination: {fileID: 0}
   lastDataEgg: {fileID: 0}
   isDeadEnd: 0
   hits: 0

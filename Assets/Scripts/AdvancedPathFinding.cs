@@ -12,36 +12,81 @@ public class AdvancedPathFinding : MonoBehaviour
 
     [SerializeField] float speed = .1f;
     [SerializeField] float rotationSpeed = 4f;
+    [SerializeField] GameObject firstOpenEgg;
+    
+    public GameObject lastDataEgg = null;
 
-    private GameObject lastDataEgg = null;
     private HashSet<GameObject> openEggs = new HashSet<GameObject>();
     private HashSet<GameObject> touchedEggs = new HashSet<GameObject>();
 
     private Vector3 target;
     private Vector3 targetDir;
+    private States currentState;
+
+    public enum States {
+        Stop,
+        Calculate,
+        Collect
+    }
 
     // Use this for initialization
     void Start()
     {
         Debug.Log("I'm going to find my way out!");
-        GetComponent<Renderer>().material.color = new Color(0, 0, 255);
+        GetComponent<Renderer>().material.color = Color.black;
+        currentState = States.Stop;
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        
+        switch (currentState) {
+            case States.Stop:
+                break;
+            case States.Calculate:
+                Calculate();
+                break;
+            case States.Collect:
+                Collect();
+                break;
+            default:
+                Debug.LogError("Invalid State!");
+                break;
+        }
+
+        foreach (var egg in openEggs)
+        {
+            egg.GetComponent<Renderer>().material.color = new Color(255, 0, 0);
+        }
+
+        if (openEggs.Count > 0)
+        {
+            firstOpenEgg = openEggs.First();
+        }
+    }
+
+    public void ChangeState(States newState) {
+        currentState = newState;
+    }
+
+    public States GetCurrentState()
+    {
+        return currentState;
+    }
+
+    void Calculate()
+    {
+        PathFind(AStar());
+    }
+
+    void Collect()
+    {
         if (!turnFinish)
         {
-            Turn(AdvancedPath());
+            Turn(AStar());
         }
         else
         {
             MoveForward();
-        }
-        
-        foreach (var egg in openEggs)
-        {
-            egg.GetComponent<Renderer>().material.color = new Color(255, 0, 0);
         }
     }
 
@@ -61,7 +106,7 @@ public class AdvancedPathFinding : MonoBehaviour
             // Move our position a step closer to the target.
             float step = speed * Time.deltaTime; // calculate distance to move
             transform.position = Vector3.MoveTowards(transform.position, target, step);
-           // Debug.Log("I'm moving!");
+            // Debug.Log("I'm moving!");
         }
         else
         {
@@ -70,6 +115,43 @@ public class AdvancedPathFinding : MonoBehaviour
             isTurning = true;
             Debug.LogError("I reached my destination!");
         }
+    }
+
+    void PathFind(Path path)
+    {
+        switch (path)
+        {
+            case Path.Back:
+                targetDir = -transform.forward;
+                break;
+            case Path.Forward:
+                targetDir = transform.forward;
+                break;
+            case Path.Left:
+                targetDir = -transform.right;
+                break;
+            case Path.Right:
+                targetDir = transform.right;
+                break;
+            case Path.Return:
+                if (openEggs.Count > 0)
+                {
+                    transform.position = openEggs.First().GetComponent<PathData>().GetLastDataEgg().transform.position;
+                    lastDataEgg = openEggs.First().GetComponent<PathData>().GetLastDataEgg();
+                    targetDir = openEggs.First().transform.position - transform.position;
+                    openEggs.Remove(openEggs.First());
+                }
+                break;
+            default:
+                Debug.LogError("I have nowhere to go");
+                break;
+        }
+        Debug.LogError("I have a target direction!");
+        Debug.LogError(path);
+
+        target = transform.position + targetDir;
+        gameObject.GetComponent<Rigidbody>().position = target;
+     
     }
 
     void Turn(Path path)
@@ -120,19 +202,22 @@ public class AdvancedPathFinding : MonoBehaviour
         }
     }
 
-    Path AdvancedPath()
+    Path AStar()
     {
         RaycastHit forwardRay;
         RaycastHit leftRay;
         RaycastHit rightRay;
+        RaycastHit backRay;
 
         Physics.Raycast(transform.position, transform.forward, out forwardRay, 1f);
         Physics.Raycast(transform.position, -transform.right, out leftRay, 1f);
         Physics.Raycast(transform.position, transform.right, out rightRay, 1f);
+        Physics.Raycast(transform.position, -transform.forward, out backRay, 1f);
 
         int rightCost = GetCost(rightRay);
         int forwardCost = GetCost(forwardRay);
         int leftCost = GetCost(leftRay);
+        int backCost = GetCost(backRay);
 
         if (rightCost == 0)
         {
@@ -158,20 +243,29 @@ public class AdvancedPathFinding : MonoBehaviour
             return Path.Left;
         } 
 
+        if (backCost == 0)
+        {
+            backCost = 100000;
+        } else if (backCost == -1)
+        {
+            return Path.Back;
+        }
+
         int min = 0;
 
-        min = Mathf.Min(Mathf.Min(rightCost, forwardCost), leftCost);
+        min = Mathf.Min(Mathf.Min(Mathf.Min(rightCost, forwardCost), leftCost),backCost);
 
         int openEggCost = 10000;
         if (openEggs.Count > 0)
         {
             openEggCost = openEggs.First().GetComponent<PathData>().GetHCost() + lastDataEgg.GetComponent<PathData>().GetGCost();
-            min = Mathf.Min(Mathf.Min(Mathf.Min(rightCost, forwardCost), leftCost), openEggCost);
+            min = Mathf.Min(Mathf.Min(Mathf.Min(Mathf.Min(rightCost, forwardCost), leftCost),backCost), openEggCost);
         }
 
         Debug.Log("right " + rightCost);
         Debug.Log("left  " + leftCost);
         Debug.Log("forwd " + forwardCost);
+        Debug.Log("back  " + backCost);
         Debug.Log("open  " + openEggCost);
         Debug.Log("min   " + min);
 
@@ -181,11 +275,14 @@ public class AdvancedPathFinding : MonoBehaviour
             if (forwardCost < 100000)
             {
                 AddOpenEgg(forwardRay);
-
             }
             if (leftCost < 100000)
             {
                 AddOpenEgg(leftRay);
+            }
+            if (backCost < 100000)
+            {
+                AddOpenEgg(backRay);
             }
             return Path.Right;
         }
@@ -200,6 +297,10 @@ public class AdvancedPathFinding : MonoBehaviour
             {
                 AddOpenEgg(leftRay);
             }
+            if (backCost < 100000)
+            {
+                AddOpenEgg(backRay);
+            }
             return Path.Forward;
         }
 
@@ -213,7 +314,28 @@ public class AdvancedPathFinding : MonoBehaviour
             {
                 AddOpenEgg(rightRay);
             }
+            if (backCost < 100000)
+            {
+                AddOpenEgg(backRay);
+            }
             return Path.Left;
+        }
+
+        if (min == backCost)
+        {
+            if (forwardCost < 100000)
+            {
+                AddOpenEgg(forwardRay);
+            }
+            if (rightCost < 100000)
+            {
+                AddOpenEgg(rightRay);
+            }
+            if (leftCost < 100000)
+            {
+                AddOpenEgg(leftRay);
+            }
+            return Path.Back;
         }
 
         if (openEggCost == min)
@@ -229,6 +351,10 @@ public class AdvancedPathFinding : MonoBehaviour
             if (leftCost < 100000)
             {
                 AddOpenEgg(leftRay);
+            }
+            if (backCost < 100000)
+            {
+                AddOpenEgg(backRay);
             }
             return Path.Return;
         }
@@ -255,7 +381,7 @@ public class AdvancedPathFinding : MonoBehaviour
         if (ray.collider != null)
         {
             if (ray.collider.tag == "Maze") { }
-            else if (ray.collider.name == "Exit") { return -1; }
+            else if (ray.collider.tag == "Exit") { return -1; }
             else if (ray.collider.tag == "DataEgg")
             {
                 if (touchedEggs.Contains(ray.transform.gameObject)) { return 0; }
@@ -316,4 +442,12 @@ public class AdvancedPathFinding : MonoBehaviour
             openEggs = sortedEggs;
         }
     }
+
+
+    public void ResetEggs()
+    {
+        touchedEggs.Clear();
+        openEggs.Clear();
+    }
+
 }

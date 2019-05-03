@@ -16,6 +16,15 @@ public class PathData : MonoBehaviour {
     [SerializeField] bool isDeadEnd = false;
     [SerializeField] int hits;
 
+    public void ResetEggData()
+    {
+        hCost = 0;
+        gCost = 0;
+        fCost = 0;
+        destination = null;
+        lastDataEgg = null;
+    }
+
     public void UpdateHCost()
     {
         hCost = (int)Mathf.Abs(transform.position.x - destination.position.x) * 100 / 10 + (int)Mathf.Abs(transform.position.z - destination.position.z) * 100 / 10;
@@ -59,8 +68,10 @@ public class PathData : MonoBehaviour {
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.magenta;
-        if(GetLastDataEgg() != null)
+        if (GetLastDataEgg() != null)
+        {
             Gizmos.DrawLine(transform.position, GetLastDataEgg().transform.position);
+        }
     }
 
     public bool GetIsDeadEnd()
@@ -71,6 +82,11 @@ public class PathData : MonoBehaviour {
     public int GetHits()
     {
         return hits;
+    }
+
+    public void SetDestination(Transform newDestination)
+    {
+        destination = newDestination;
     }
 
     //public void WallCheck()

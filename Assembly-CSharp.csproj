@@ -56,6 +56,7 @@
      <Compile Include="Assets\Real Materials\Showcase\Scripts\Camera_WASD_movement.cs" />
      <Compile Include="Assets\Real Materials\Showcase\Scripts\LPPV_lighting_update_only_once.cs" />
      <Compile Include="Assets\Scripts\AdvancedPathFinding.cs" />
+     <Compile Include="Assets\Scripts\CollectEggSpawner.cs" />
      <Compile Include="Assets\Scripts\DataEggSpawner.cs" />
      <Compile Include="Assets\Scripts\Exit.cs" />
      <Compile Include="Assets\Scripts\PathData.cs" />
