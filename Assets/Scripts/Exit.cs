@@ -15,7 +15,7 @@ public class Exit : MonoBehaviour {
     {
         if (other.gameObject.name == "AdvanceAI")
         {
-            Debug.LogError("AI found the Exit");
+            //Debug.LogError("AI found the Exit");
             AdvancedPathFinding ai = other.GetComponent<AdvancedPathFinding>();
             ai.ChangeState(AdvancedPathFinding.States.Stop);
             ai.ResetEggs();

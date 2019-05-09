@@ -7,6 +7,7 @@ public class CollectEggSpawner : MonoBehaviour {
     [SerializeField] GameObject exit;
     [SerializeField] AdvancedPathFinding ai;
     DataEggSpawner eggs;
+    public bool isClickable = true;
 
     void Start()
     {
@@ -15,7 +16,7 @@ public class CollectEggSpawner : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-        if (ai.GetCurrentState() == AdvancedPathFinding.States.Stop)
+        if (isClickable)
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -33,6 +34,7 @@ public class CollectEggSpawner : MonoBehaviour {
 
         if (hit.collider != null)
         {
+            isClickable = false;
             Instantiate(exit, hit.collider.gameObject.transform.position, Quaternion.identity);
             eggs.ResetEggData();
             eggs.UpdateEggData(hit.collider.transform);

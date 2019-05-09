@@ -70,7 +70,8 @@ public class AdvancedPathFinding : MonoBehaviour
     {
         return currentState;
     }
-
+    
+    
     void Calculate()
     {
         PathFind(AStar());
@@ -116,7 +117,7 @@ public class AdvancedPathFinding : MonoBehaviour
     void PathFind(Path path)
     {
         SetTargetDir(path);
-        Debug.LogError(path);
+        //Debug.LogError(path);
 
         target = transform.position + targetDir;
         gameObject.GetComponent<Rigidbody>().position = target;
@@ -130,7 +131,7 @@ public class AdvancedPathFinding : MonoBehaviour
             isTurning = false;
             SetTargetDir(path);
 
-            Debug.LogError(path);
+            //Debug.LogError(path);
         }
 
         Quaternion targetRotation = Quaternion.LookRotation(targetDir);
