@@ -13,8 +13,19 @@ public class PathData : MonoBehaviour {
 
     [SerializeField] Transform destination;
     [SerializeField] GameObject lastDataEgg = null;
-    [SerializeField] bool isDeadEnd = false;
-    [SerializeField] int hits;
+
+    [SerializeField] bool isShortestPath;
+
+    public bool GetIsShortestPath()
+    {
+        return isShortestPath;
+    }
+
+    public void SetIsShortestPath(bool b)
+    {
+        isShortestPath = b;
+    }
+
 
     public void ResetEggData()
     {
@@ -23,6 +34,7 @@ public class PathData : MonoBehaviour {
         fCost = 0;
         destination = null;
         lastDataEgg = null;
+        isShortestPath = false;
     }
 
     public void UpdateHCost()
@@ -40,6 +52,11 @@ public class PathData : MonoBehaviour {
     public void UpdateLastDataEgg(GameObject previousEgg)
     {
         lastDataEgg = previousEgg;
+    }
+
+    public void UpdateLastDataEgg()
+    {
+        lastDataEgg = null;
     }
 
     private void SetFCost()
@@ -65,28 +82,23 @@ public class PathData : MonoBehaviour {
         return lastDataEgg;
     }
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.magenta;
-        if (GetLastDataEgg() != null)
-        {
-            Gizmos.DrawLine(transform.position, GetLastDataEgg().transform.position);
-        }
-    }
-
-    public bool GetIsDeadEnd()
-    {
-        return isDeadEnd;
-    }
-    
-    public int GetHits()
-    {
-        return hits;
-    }
+    //private void OnDrawGizmos()
+    //{
+    //    Gizmos.color = Color.magenta;
+    //    if (GetLastDataEgg() != null)
+    //    {
+    //        Gizmos.DrawLine(transform.position, GetLastDataEgg().transform.position);
+    //    }
+    //}
 
     public void SetDestination(Transform newDestination)
     {
         destination = newDestination;
+    }
+
+    public Transform GetDestination()
+    {
+        return destination;
     }
 
     //public void WallCheck()

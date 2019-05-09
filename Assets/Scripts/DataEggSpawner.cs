@@ -29,6 +29,10 @@ public class DataEggSpawner : MonoBehaviour {
         {
             egg.ResetEggData();
             egg.GetComponent<Renderer>().material.color = Color.white;
+            if (egg.GetLastDataEgg() != null)
+            {
+                Debug.LogWarning(egg.name);
+            }
         }
     }
 

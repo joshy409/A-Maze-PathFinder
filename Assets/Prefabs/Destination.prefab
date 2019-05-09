@@ -20,9 +20,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4516739586422730}
   - component: {fileID: 65947254394847026}
-  - component: {fileID: 114236411006819592}
+  - component: {fileID: 114633726646896192}
   m_Layer: 0
-  m_Name: Exit
+  m_Name: Destination
   m_TagString: Exit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -53,7 +53,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114236411006819592
+--- !u!114 &114633726646896192
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -61,9 +61,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 1418620699869292}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0925ce9684a97f34599049c40554ebe0, type: 3}
+  m_Script: {fileID: 11500000, guid: b3fccbcc3ee564a46a69c6fbd6f01153, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shortestPath: {fileID: 0}
-  Destination: {fileID: 1418620699869292, guid: 28e624e2de0d9074b91c800e9205a484,
-    type: 2}

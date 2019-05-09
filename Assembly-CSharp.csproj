@@ -58,10 +58,14 @@
      <Compile Include="Assets\Scripts\AdvancedPathFinding.cs" />
      <Compile Include="Assets\Scripts\CollectEggSpawner.cs" />
      <Compile Include="Assets\Scripts\DataEggSpawner.cs" />
+     <Compile Include="Assets\Scripts\Destination.cs" />
      <Compile Include="Assets\Scripts\Exit.cs" />
+     <Compile Include="Assets\Scripts\Helpers.cs" />
+     <Compile Include="Assets\Scripts\MapGenerator.cs" />
      <Compile Include="Assets\Scripts\PathData.cs" />
      <Compile Include="Assets\Scripts\PathFinding.cs" />
      <Compile Include="Assets\Scripts\ShortestPath.cs" />
+     <Compile Include="Assets\Scripts\Tile.cs" />
      <None Include="Assets\Real Materials\Showcase\Sounds\Seisemic - license.txt" />
      <None Include="Assets\Real Materials\Showcase\Sounds\Waves background - license.txt" />
  <Reference Include="Unity.ProBuilder.AddOns.Editor">

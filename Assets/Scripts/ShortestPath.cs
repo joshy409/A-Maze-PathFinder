@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class ShortestPath : MonoBehaviour
 {
-    [SerializeField] Exit exit;
-    private GameObject dataEgg;
-    private bool once = true;
+    [SerializeField] AdvancedPathFinding ai;
+    [SerializeField] GameObject dataEgg;
+    [SerializeField] GameObject Destination;
+
 
     // Update is called once per frame
     void FixedUpdate()
@@ -14,12 +15,22 @@ public class ShortestPath : MonoBehaviour
         if (dataEgg != null)
         {
             dataEgg.GetComponent<Renderer>().material.color = new Color(0, 0, 255);
+            dataEgg.GetComponent<PathData>().SetIsShortestPath(true);
             dataEgg = dataEgg.GetComponent<PathData>().GetLastDataEgg();
+            if (dataEgg == null)
+            {
+                //ai.startingEgg.GetComponent<PathData>().SetIsShortestPath(false);
+                ai.transform.position = ai.startingEgg.transform.position;
+                Instantiate(Destination, ai.startingEgg.GetComponent<PathData>().GetDestination().position, Quaternion.identity);
+                ai.ChangeState(AdvancedPathFinding.States.Collect);
+                this.enabled = false;
+            }
         }
     }
 
     public void SetDataEgg(GameObject newDataEgg)
     {
         dataEgg = newDataEgg;
+        ai.startingEgg.GetComponent<PathData>().UpdateLastDataEgg();
     }
 }

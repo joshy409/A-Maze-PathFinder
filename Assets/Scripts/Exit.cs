@@ -10,6 +10,7 @@ public class Exit : MonoBehaviour {
     {
         shortestPath = GameObject.Find("Maze").GetComponent<ShortestPath>();
     }
+
 	void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.name == "AdvanceAI")

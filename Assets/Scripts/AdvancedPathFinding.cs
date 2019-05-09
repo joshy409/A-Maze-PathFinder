@@ -5,16 +5,16 @@ using System.Linq;
 
 public class AdvancedPathFinding : MonoBehaviour
 {
-    private bool isTurning = true;
-    private bool isMoving = true;
-    private bool turnFinish = false;
+    public bool isTurning = true;
+    public bool isMoving = true;
+    public bool turnFinish = false;
     private Path path;
 
     [SerializeField] float speed = .1f;
     [SerializeField] float rotationSpeed = 4f;
-    [SerializeField] GameObject firstOpenEgg;
     
     public GameObject lastDataEgg = null;
+    public GameObject startingEgg; 
 
     private HashSet<GameObject> openEggs = new HashSet<GameObject>();
     private HashSet<GameObject> touchedEggs = new HashSet<GameObject>();
@@ -35,6 +35,7 @@ public class AdvancedPathFinding : MonoBehaviour
         Debug.Log("I'm going to find my way out!");
         GetComponent<Renderer>().material.color = Color.black;
         currentState = States.Stop;
+        startingEgg = lastDataEgg;
     }
 
     void FixedUpdate()
@@ -58,14 +59,11 @@ public class AdvancedPathFinding : MonoBehaviour
             egg.GetComponent<Renderer>().material.color = new Color(255, 0, 0);
         }
 
-        if (openEggs.Count > 0)
-        {
-            firstOpenEgg = openEggs.First();
-        }
     }
 
     public void ChangeState(States newState) {
         currentState = newState;
+        Debug.LogError(newState);
     }
 
     public States GetCurrentState()
@@ -82,7 +80,7 @@ public class AdvancedPathFinding : MonoBehaviour
     {
         if (!turnFinish)
         {
-            Turn(AStar());
+            Turn(ShortestPath());
         }
         else
         {
@@ -96,7 +94,6 @@ public class AdvancedPathFinding : MonoBehaviour
         {
             isMoving = false;
             target = transform.position + transform.forward;
-            Debug.LogError("I have a target destination!");
             //Debug.Log(target);
         }
 
@@ -113,11 +110,39 @@ public class AdvancedPathFinding : MonoBehaviour
             turnFinish = false;
             isMoving = true;
             isTurning = true;
-            Debug.LogError("I reached my destination!");
         }
     }
 
     void PathFind(Path path)
+    {
+        SetTargetDir(path);
+        Debug.LogError(path);
+
+        target = transform.position + targetDir;
+        gameObject.GetComponent<Rigidbody>().position = target;
+    }
+
+
+    void Turn(Path path)
+    {
+        if (isTurning)
+        {
+            isTurning = false;
+            SetTargetDir(path);
+
+            Debug.LogError(path);
+        }
+
+        Quaternion targetRotation = Quaternion.LookRotation(targetDir);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+        if (targetDir != null && Vector3.Distance(transform.forward, targetDir) < 0.1f)
+        {
+            transform.rotation = targetRotation;
+            turnFinish = true;
+        }
+    }
+    private void SetTargetDir(Path path)
     {
         switch (path)
         {
@@ -145,60 +170,6 @@ public class AdvancedPathFinding : MonoBehaviour
             default:
                 Debug.LogError("I have nowhere to go");
                 break;
-        }
-        Debug.LogError("I have a target direction!");
-        Debug.LogError(path);
-
-        target = transform.position + targetDir;
-        gameObject.GetComponent<Rigidbody>().position = target;
-     
-    }
-
-    void Turn(Path path)
-    {
-        if (isTurning)
-        {
-            isTurning = false;
-            switch (path)
-            {
-                case Path.Back:
-                    targetDir = -transform.forward;
-                    break;
-                case Path.Forward:
-                    targetDir = transform.forward;
-                    break;
-                case Path.Left:
-                    targetDir = -transform.right;
-                    break;
-                case Path.Right:
-                    targetDir = transform.right;
-                    break;
-                case Path.Return:
-                    if (openEggs.Count > 0)
-                    {
-                        transform.position = openEggs.First().GetComponent<PathData>().GetLastDataEgg().transform.position;
-                        lastDataEgg = openEggs.First().GetComponent<PathData>().GetLastDataEgg().GetComponent<PathData>().GetLastDataEgg();
-                        targetDir = openEggs.First().transform.position - transform.position;
-                        openEggs.Remove(openEggs.First());
-                    }
-                    break;
-                default:
-                    targetDir = transform.forward;
-                    break;
-            }
-            Debug.LogError("I have a target direction!");
-            Debug.LogError(path);
-        }
-
-        Quaternion targetRotation = Quaternion.LookRotation(targetDir);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-        Debug.Log("I'm rotating");
-
-        if (targetDir != null && Vector3.Distance(transform.forward, targetDir) < 0.1f)
-        {
-            transform.rotation = targetRotation;
-            turnFinish = true;
-            Debug.LogError("I'm done rotating!");
         }
     }
 
@@ -262,12 +233,12 @@ public class AdvancedPathFinding : MonoBehaviour
             min = Mathf.Min(Mathf.Min(Mathf.Min(Mathf.Min(rightCost, forwardCost), leftCost),backCost), openEggCost);
         }
 
-        Debug.Log("right " + rightCost);
-        Debug.Log("left  " + leftCost);
-        Debug.Log("forwd " + forwardCost);
-        Debug.Log("back  " + backCost);
-        Debug.Log("open  " + openEggCost);
-        Debug.Log("min   " + min);
+        //Debug.Log("right " + rightCost);
+        //Debug.Log("left  " + leftCost);
+        //Debug.Log("forwd " + forwardCost);
+        //Debug.Log("back  " + backCost);
+        //Debug.Log("open  " + openEggCost);
+        //Debug.Log("min   " + min);
 
 
         if (min == rightCost)
@@ -363,6 +334,72 @@ public class AdvancedPathFinding : MonoBehaviour
 
     }
 
+    Path ShortestPath()
+    {
+        RaycastHit forwardRay;
+        RaycastHit leftRay;
+        RaycastHit rightRay;
+        RaycastHit backRay;
+
+        Physics.Raycast(transform.position, transform.forward, out forwardRay, 1f);
+        Physics.Raycast(transform.position, -transform.right, out leftRay, 1f);
+        Physics.Raycast(transform.position, transform.right, out rightRay, 1f);
+        Physics.Raycast(transform.position, -transform.forward, out backRay, 1f);
+
+        if (forwardRay.collider.CompareTag("Exit"))
+        {
+            return Path.Forward;
+        }
+
+        if (leftRay.collider.CompareTag("Exit"))
+        {
+            return Path.Left;
+        }
+        if (rightRay.collider.CompareTag("Exit"))
+        {
+            return Path.Right;
+        }
+        if (backRay.collider.CompareTag("Exit"))
+        {
+            return Path.Back;
+        }
+
+
+        if (forwardRay.collider.CompareTag("DataEgg"))
+        {
+            if(forwardRay.collider.gameObject.GetComponent<PathData>().GetIsShortestPath())
+            {
+                return Path.Forward;
+            }
+        }
+
+        if (leftRay.collider.CompareTag("DataEgg"))
+        {
+            if (leftRay.collider.gameObject.GetComponent<PathData>().GetIsShortestPath())
+            {
+                return Path.Left;
+            }
+        }
+
+        if (rightRay.collider.CompareTag("DataEgg"))
+        {
+            if (rightRay.collider.gameObject.GetComponent<PathData>().GetIsShortestPath())
+            {
+                return Path.Right;
+            }
+        }
+
+        if (backRay.collider.CompareTag("DataEgg"))
+        {
+            if (backRay.collider.gameObject.GetComponent<PathData>().GetIsShortestPath())
+            {
+                return Path.Back;
+            }
+        }
+
+        return Path.Return ;
+    }
+
     private void AddOpenEgg(RaycastHit ray)
     {
         GameObject dataEgg = ray.transform.gameObject;
@@ -385,7 +422,7 @@ public class AdvancedPathFinding : MonoBehaviour
             else if (ray.collider.tag == "DataEgg")
             {
                 if (touchedEggs.Contains(ray.transform.gameObject)) { return 0; }
-                if (ray.transform.gameObject.GetComponent<PathData>().GetIsDeadEnd()) { return 1; }
+                //if (ray.transform.gameObject.GetComponent<PathData>().GetIsDeadEnd()) { return 1; }
                 if (lastDataEgg != null)
                 {
                     return ray.transform.GetComponent<PathData>().GetHCost() + lastDataEgg.GetComponent<PathData>().GetGCost();
@@ -403,7 +440,14 @@ public class AdvancedPathFinding : MonoBehaviour
     {
         if (other.CompareTag("DataEgg"))
         {
-            other.GetComponent<Renderer>().material.color = new Color(0, 255, 0);
+            if (currentState == States.Calculate)
+            {
+                other.GetComponent<Renderer>().material.color = new Color(0, 255, 0);
+            }
+            if (currentState == States.Collect)
+            {
+                other.GetComponent<Renderer>().material.color = new Color(0, 0, 255);
+            }
 
             if (openEggs.Contains(other.gameObject))
             {
@@ -448,6 +492,9 @@ public class AdvancedPathFinding : MonoBehaviour
     {
         touchedEggs.Clear();
         openEggs.Clear();
+        isTurning = true;
+        isMoving = true;
+        turnFinish = false;
     }
 
 }
