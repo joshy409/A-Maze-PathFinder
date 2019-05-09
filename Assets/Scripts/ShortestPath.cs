@@ -19,9 +19,9 @@ public class ShortestPath : MonoBehaviour
             dataEgg = dataEgg.GetComponent<PathData>().GetLastDataEgg();
             if (dataEgg == null)
             {
-                //ai.startingEgg.GetComponent<PathData>().SetIsShortestPath(false);
                 ai.transform.position = ai.startingEgg.transform.position;
                 Instantiate(Destination, ai.startingEgg.GetComponent<PathData>().GetDestination().position, Quaternion.identity);
+                ai.GetComponent<MeshRenderer>().enabled = true;
                 ai.ChangeState(AdvancedPathFinding.States.Collect);
                 this.enabled = false;
             }

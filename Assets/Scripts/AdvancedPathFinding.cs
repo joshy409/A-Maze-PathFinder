@@ -21,7 +21,7 @@ public class AdvancedPathFinding : MonoBehaviour
 
     private Vector3 target;
     private Vector3 targetDir;
-    private States currentState;
+    public States currentState;
 
     public enum States {
         Stop,
@@ -233,12 +233,12 @@ public class AdvancedPathFinding : MonoBehaviour
             min = Mathf.Min(Mathf.Min(Mathf.Min(Mathf.Min(rightCost, forwardCost), leftCost),backCost), openEggCost);
         }
 
-        //Debug.Log("right " + rightCost);
-        //Debug.Log("left  " + leftCost);
-        //Debug.Log("forwd " + forwardCost);
-        //Debug.Log("back  " + backCost);
-        //Debug.Log("open  " + openEggCost);
-        //Debug.Log("min   " + min);
+        Debug.Log("right " + rightCost);
+        Debug.Log("left  " + leftCost);
+        Debug.Log("forwd " + forwardCost);
+        Debug.Log("back  " + backCost);
+        Debug.Log("open  " + openEggCost);
+        Debug.Log("min   " + min);
 
 
         if (min == rightCost)

@@ -38,6 +38,7 @@ public class CollectEggSpawner : MonoBehaviour {
             eggs.UpdateEggData(hit.collider.transform);
             hit.collider.gameObject.GetComponent<Renderer>().material.color = Color.cyan;
             ai.startingEgg = ai.lastDataEgg;
+            ai.GetComponent<MeshRenderer>().enabled = false;
             ai.ChangeState(AdvancedPathFinding.States.Calculate);
         }
     }

@@ -6361,6 +6361,10 @@ Prefab:
       propertyPath: m_Layer
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 100002, guid: 6932db707167cb2469a36dd1de266104, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6932db707167cb2469a36dd1de266104, type: 3}
   m_IsPrefabAsset: 0
@@ -10191,10 +10195,11 @@ MonoBehaviour:
   isTurning: 1
   isMoving: 1
   turnFinish: 0
-  speed: 5
+  speed: 10
   rotationSpeed: 50
   lastDataEgg: {fileID: 0}
   startingEgg: {fileID: 0}
+  currentState: 0
 --- !u!54 &825756999
 Rigidbody:
   m_ObjectHideFlags: 0
